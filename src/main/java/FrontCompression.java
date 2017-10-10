@@ -32,20 +32,20 @@ public class FrontCompression {
      * @return the input compressed using front encoding
      */
     public static String compress(final String corpus) {
-        /*
-         * Defend against bad inputs.
-         */
         if (corpus == null) {
             return null;
         } else if (corpus.length() == 0) {
             return "";
         }
+        String[] contentArr = corpus.split("\n");
+        String output = "0 " + contentArr[0] + "\n";
 
-        /*
-         * Complete this function.
-         */
-
-        return "";
+        for (int i = 1; i < contentArr.length; i++) {
+            int prefix = longestPrefix(contentArr[i - 1], contentArr[i]);
+            String suffix = contentArr[i].substring(prefix);
+            output += prefix + " " + suffix + "\n";
+        }
+        return output;
     }
 
     /**
@@ -55,20 +55,25 @@ public class FrontCompression {
      * @return the input decompressed using front encoding
      */
     public static String decompress(final String corpus) {
-        /*
-         * Defend against bad inputs.
-         */
         if (corpus == null) {
             return null;
         } else if (corpus.length() == 0) {
             return "";
         }
-
-        /*
-         * Complete this function.
-         */
-
-        return "";
+        String[] corpusArr = corpus.split("\n");  //{"0 AA", "2 A", ...}
+        String[] outputArr = new String[corpusArr.length];
+        outputArr[0] = corpusArr[0].split(" ")[1];  //ignores first 0 and prints first word
+        for (int i = 1; i < corpusArr.length; i++) {
+            String prefix =
+                    outputArr[i - 1].substring(0, Integer.parseInt(corpusArr[i].split(" ")[0]));
+            String suffix = corpusArr[i].split(" ")[1];
+            outputArr[i] = prefix + suffix;
+        }
+        String output = "";
+        for (int i = 0; i < outputArr.length; i++) {
+            output += outputArr[i] + "\n";
+        }
+        return output;
     }
 
     /**
@@ -79,10 +84,15 @@ public class FrontCompression {
      * @return the length of the common prefix between the two strings
      */
     private static int longestPrefix(final String firstString, final String secondString) {
-        /*
-         * Complete this function.
-         */
-        return 0;
+        int count = 0;
+        for (int i = 0; i < Math.min(firstString.length(), secondString.length()); i++) {
+            if (secondString.charAt(i) == firstString.charAt(i)) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
     }
 
     /**
